@@ -3,6 +3,11 @@
 color:red;
 
 }
+.barchart text {
+	fill: black;
+	font: 16px sans-serif;
+	text-anchor: middle; 
+}
 
 table tbody{
     color:blue;
