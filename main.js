@@ -10,7 +10,7 @@ var kehaiquote  = "6501/T";
   $("#button").click(function(){
       var kehaiquote = $("#input").val();
       console.log(kehaiquote);
-    //var kehaiquote  = "6501/T"
+    //"6501/T"
       
       var parameters =  $.param({
         F: "ja_stk_dtl_qtn",
@@ -18,20 +18,17 @@ var kehaiquote  = "6501/T";
         quote: kehaiquote,
          });
   
+    //APIリクエストURL
       var kehai_url = apiurl + parameters; 
         console.log(kehai_url);
+    //APIコール    
     $.ajax({
          url: kehai_url,
          type:'GET',
          dataType:'json'
-         //success: function(data) {
-           //console.log(data);
-             //   $("#main").append("<p>データ"+data+"!</p>");
-         //}
-        
       })
+                          // Ajaxリクエストが成功した時発動
        .done( (data) => {
-                        //console.log(data);
                           var cputime =data.cputime;
                           console.log("cputime:"+cputime);
                             $(".kehaiquote").html("<p>" +kehaiquote+ "</p>");
@@ -47,47 +44,59 @@ var kehaiquote  = "6501/T";
                     })
                     // Ajaxリクエストが成功・失敗どちらでも発動
         .always( (data) => {
-    
                     });
   });
   
   
   function kehaihyouji(data,kehaiquote) {
-    $("table tbody").html("");
+    $(".canvas").html("");
       if (data.section1.hitcount == 1){
         //$.each(data.section1.data[kehaiquote],function(key,val){
      // console.log("key: "+key+" value: "+val);
       //$("table tbody").append("<tr class="+key+"><td>" + key + "</td><td>" + val + "</td></tr>");
      //});
      
-     //d3.js　.append svg
-    var width = 400; // グラフの幅
+    var width = 420; // グラフの幅
     var height = 600; // グラフの高さ
     
     //データの配列を用意
     var kehai=data.section1.data[kehaiquote];
+       for (var key in kehai){
+         kehai[key]=kehai[key].replace(/,/g, "");// コンマを取る
+         kehai[key]=parseFloat(kehai[key]);//Number型へ変換　(小数点を含むためParseIntでなくParseFloat)
+         if( isNaN( kehai[key] ) ) {
+            kehai[key]="";
+        
+      }}//ストップ高・ストップ安銘柄はNaNで値が返却されるため、""に
+      
     var kaikehai=[];
     var urikehai=[];
     var kaikakaku=[];
     var urikakaku=[];
       for(var i=1;i<11;i++){
-        kaikehai["GBV"+i]=kehai["GBV"+i].replace(/,/g, ""); //連想配列  コンマを取る
-        kaikehai["GBV"+i] =parseInt(kaikehai["GBV"+i]);//Number型へ変換
-        kaikakaku["GAP"+i]=kehai["GAP"+i].replace(/,/g, ""); //連想配列  コンマを取る
-        kaikakaku["GAP"+i] =parseInt(kaikakaku["GAP"+i]);//Number型へ変換
-        urikakaku["GBP"+i]=kehai["GBP"+i].replace(/,/g, ""); //連想配列  コンマを取る
-        urikakaku["GBP"+i] =parseInt(urikakaku["GBP"+i]);//Number型へ変換
-        urikehai["GAV"+i]=kehai["GAV"+i].replace(/,/g, ""); //連想配列  コンマを取る
-        urikehai["GAV"+i] =parseInt(urikehai["GAV"+i]);//Number型へ変換
+        kaikehai["GBV"+i]=kehai["GBV"+i]; 
+        kaikakaku["GBP"+i]=kehai["GBP"+i]
+        urikakaku["GAP"+i]=kehai["GAP"+i]
+        urikehai["GAV"+i]=kehai["GAV"+i]
       };
       var kakaku=$.extend({},kaikakaku,urikakaku);
       var mkehai=$.extend({},kaikehai,urikehai);
+      console.log(kehai);
       console.log(kaikehai);
       console.log(kaikakaku);
       console.log(urikehai);
       console.log(urikakaku);
       console.log(mkehai);
       console.log(kakaku);
+
+    var oukehai =[];
+        oukehai["QOV"]=kehai["QOV"];
+        oukehai["QUV"]=kehai["QUV"];
+    var nariyukikehai=[];
+        nariyukikehai["AAV"]=kehai["AAV"];
+        nariyukikehai["ABV"]=kehai["ABV"];
+    console.log(oukehai);
+    console.log(nariyukikehai);
     
     //kaisclale
     var kaixscale =d3.scaleLinear()
@@ -97,7 +106,15 @@ var kehaiquote  = "6501/T";
 	  var urixscale =d3.scaleLinear()
 	    .domain([0, d3.max(Object.values(mkehai))])
 	    .range([180,0])
-	
+	 //overunderscale
+  	 var ouxscale =d3.scaleLinear()
+	     .domain([0, d3.max(Object.values(oukehai))])
+	     .range([0,180])
+	   var narixscale =d3.scaleLinear()
+	     .domain([0, d3.max(Object.values(nariyukikehai))])
+	     .range([0,180])  
+	     
+	        
      var svg= d3.select('.canvas')
               .append("svg")
                 .attr("width", width)
@@ -110,7 +127,7 @@ var kehaiquote  = "6501/T";
 	              
       	      g.append('rect')
       	         .attr('fill','red')
-      	         .attr('x',225+'px')
+      	         .attr('x',235+'px')
       	         .attr('y',function(d,i){
       	              return 300+30*i+'px';
       	                })
@@ -120,53 +137,72 @@ var kehaiquote  = "6501/T";
                  .attr('height',29+'px')  	
               g.append('text')
                  .attr('x',function(d) {
-      	                return 350+'px';
+      	                return 370+'px';
                          })
                  .attr('y',function(d,i){
       	            return 30*i+318+'px';
       	            })
+      	         .attr('text-anchor','right')
       	         .text(function(d){
       	                return(d);
       	           }); 
 	   
-	   //価格柱の描画            
+	   //買い価格柱の描画            
 	 	 var g2=svg.selectAll('g2')
-	            .data(Object.values(kakaku))
+	            .data(Object.values(kaikakaku))
 	              .enter()              
 	         g2.append('text')
                  .attr('x',function(d) {
-      	                return 195+'px';
+      	                return 205+'px';
                          })
                  .attr('y',function(d,i){
-      	            return 18+30*i+'px';
+      	            return 318+30*i+'px';
       	            })
+      	         .attr('class','pillar')
+      	         .attr('text-anchor','middle')
       	         .text(function(d){
       	                return(d);
       	           });
+      	   //売り価格柱の描画            
+	 	 var g3=svg.selectAll('g3')
+	            .data(Object.values(urikakaku))
+	              .enter()              
+	         g3.append('text')
+                 .attr('x',function(d) {
+      	                return 205+'px';
+                         })
+                 .attr('y',function(d,i){
+      	            return 288-30*i+'px';
+      	            })
+      	         .attr('class','pillar')
+      	         .attr('text-anchor','middle')
+      	         .text(function(d){
+      	                return(d);
+      	           });	           
    
    //売り気配の描画   	           
-    var g3=svg.selectAll('g3')
+    var g4=svg.selectAll('g4')
 	            .data(Object.values(urikehai))
 	              .enter()	           
       
-      g3.append('rect')
+      g4.append('rect')
 	         .attr('fill','green')
 	         .attr('x',function(d) {
 	                return urixscale(d)+'px' ;
                    })
 	         .attr('y',function(d,i){
-	              return 30*i+'px';
+	              return 268-30*i+'px';
 	                })
 	         .attr('width', function(d) {
 	                return 180-urixscale(d)+'px' ;
                    })
            .attr('height',29+'px')  	
-        g3.append('text')
+        g4.append('text')
            .attr('x',function(d) {
 	                return 4+'px';
                    })
            .attr('y',function(d,i){
-	            return 30*i+18+'px';
+	            return 288-30*i+'px';
 	            })
 	         .text(function(d){
 	                return(d);
@@ -175,6 +211,6 @@ var kehaiquote  = "6501/T";
       }
       else{
         //データ取得がうまくいかなかったとき
-       $("table tbody").append("入力された値が銘柄コードではないようです。");  
+       $(".canvas").append("入力された値が銘柄コードではないようです。");  
       }
   }
