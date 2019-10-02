@@ -5,12 +5,9 @@
 
 
 var kehaiquote  = "6501/T";
-   
- 
   $("#button").click(function(){
       var kehaiquote = $("#input").val();
       console.log(kehaiquote);
-    //"6501/T"
       
       var parameters =  $.param({
         F: "ja_stk_dtl_qtn",
@@ -18,22 +15,41 @@ var kehaiquote  = "6501/T";
         quote: kehaiquote,
          });
   
-    //APIリクエストURL
+    //気配取得APIリクエストURL
       var kehai_url = apiurl + parameters; 
         console.log(kehai_url);
     //APIコール    
-    $.ajax({
+   get_kehai= $.ajax({
          url: kehai_url,
          type:'GET',
          dataType:'json'
       })
-                          // Ajaxリクエストが成功した時発動
-       .done( (data) => {
-                          var cputime =data.cputime;
+                          // Ajaxリクエストが成功した時発動 $.ajaxはデフォルトでPromisfieng 
+       //.then(kijuntiriquest(kehaiquote))
+   
+    var parameters2 =  $.param({
+        F: "ja_stk_dtl_prc",
+        // callback: "kehai", // callback関数
+        quote: kehaiquote,
+         });
+  
+    //価格取得APIリクエストURL
+      var kijunti_url = apiurl + parameters2; 
+        console.log(kijunti_url);
+    //APIコール    
+    get_kijunti= $.ajax({
+         url: kijunti_url,
+         type:'GET',
+         dataType:'json'
+      })
+      //2つのAjaxのリクエストが終わったら実行する
+         $.when(get_kehai, get_kijunti).done(function (kehai_result, kijunti_result) {
+                        // console.log(kehai_result[0]) 
+                          var cputime =kehai_result[0].cputime;
                           console.log("cputime:"+cputime);
                             $(".kehaiquote").html("<p>" +kehaiquote+ "</p>");
                             $("#main").html("<div>処理時間 "+cputime+"</div>");
-                            kehaihyouji(data,kehaiquote);
+                            kehaihyouji(kehai_result[0],kijunti_result[0],kehaiquote);
                     })
                     // Ajaxリクエストが失敗した時発動
         .fail( (data) => {
@@ -45,34 +61,42 @@ var kehaiquote  = "6501/T";
                     // Ajaxリクエストが成功・失敗どちらでも発動
         .always( (data) => {
                     });
-  });
   
-  
-  function kehaihyouji(data,kehaiquote) {
+  });   
+ 
+
+  //気配表示　dataは気配APIの戻り値  data2は価格APIの戻り値 kehaiquoteはユーザーの入力値
+  function kehaihyouji(data,data2,kehaiquote) {
     $(".canvas").html("");
       if (data.section1.hitcount == 1){
-        //$.each(data.section1.data[kehaiquote],function(key,val){
-     // console.log("key: "+key+" value: "+val);
-      //$("table tbody").append("<tr class="+key+"><td>" + key + "</td><td>" + val + "</td></tr>");
-     //});
-     
     var width = 420; // グラフの幅
     var height = 600; // グラフの高さ
     
-    //データの配列を用意
+    //気配データの配列を用意
     var kehai=data.section1.data[kehaiquote];
        for (var key in kehai){
          kehai[key]=kehai[key].replace(/,/g, "");// コンマを取る
-         kehai[key]=parseFloat(kehai[key]);//Number型へ変換　(小数点を含むためParseIntでなくParseFloat)
+         kehai[key]=parseFloat(kehai[key]);//Number型へ変換(小数点を含むためParseIntでなくParseFloat)
          if( isNaN( kehai[key] ) ) {
             kehai[key]="";
-        
-      }}//ストップ高・ストップ安銘柄はNaNで値が返却されるため、""に
+        //ストップ高・ストップ安銘柄はNaNで値が返却されるため、""に
+      }}
+   //基準値データを用意
+    var kijunti = data2.section1.data[kehaiquote].DSP;
+    kijunti =kijunti.replace(/,/g, "");
+    kijunti =parseFloat(kijunti);
+      if( isNaN( kijunti) ) {
+            kijunti="";
+        //NaNで値が返却されるときは""に
+      }
       
+     console.log(kijunti);  
+  
     var kaikehai=[];
     var urikehai=[];
     var kaikakaku=[];
     var urikakaku=[];
+    console.log(kehai);
       for(var i=1;i<11;i++){
         kaikehai["GBV"+i]=kehai["GBV"+i]; 
         kaikakaku["GBP"+i]=kehai["GBP"+i]
@@ -126,7 +150,7 @@ var kehaiquote  = "6501/T";
 	              .enter()
 	              
       	      g.append('rect')
-      	         .attr('fill','red')
+      	         .attr('fill','#F9E3E1')
       	         .attr('x',235+'px')
       	         .attr('y',function(d,i){
       	              return 300+30*i+'px';
@@ -150,7 +174,7 @@ var kehaiquote  = "6501/T";
 	   //買い価格柱の描画            
 	 	 var g2=svg.selectAll('g2')
 	            .data(Object.values(kaikakaku))
-	              .enter()              
+	              .enter();           
 	         g2.append('text')
                  .attr('x',function(d) {
       	                return 205+'px';
@@ -158,7 +182,16 @@ var kehaiquote  = "6501/T";
                  .attr('y',function(d,i){
       	            return 318+30*i+'px';
       	            })
-      	         .attr('class','pillar')
+      	         .attr('class',function(d){
+      	           if(d > kijunti){
+      	             return "pillarup";
+      	           }else if(d < kijunti){
+      	             return "pillardown";
+      	           }else{
+      	             return "pillarnormal";
+      	           }
+      	           
+      	         })
       	         .attr('text-anchor','middle')
       	         .text(function(d){
       	                return(d);
@@ -166,7 +199,7 @@ var kehaiquote  = "6501/T";
       	   //売り価格柱の描画            
 	 	 var g3=svg.selectAll('g3')
 	            .data(Object.values(urikakaku))
-	              .enter()              
+	              .enter();             
 	         g3.append('text')
                  .attr('x',function(d) {
       	                return 205+'px';
@@ -174,7 +207,15 @@ var kehaiquote  = "6501/T";
                  .attr('y',function(d,i){
       	            return 288-30*i+'px';
       	            })
-      	         .attr('class','pillar')
+      	          .attr('class',function(d){
+      	           if(d > kijunti){
+      	             return "pillarup";
+      	           }else if(d < kijunti){
+      	             return "pillardown";
+      	           }else{
+      	             return "pillarnormal";
+      	           }
+      	           })
       	         .attr('text-anchor','middle')
       	         .text(function(d){
       	                return(d);
@@ -186,7 +227,7 @@ var kehaiquote  = "6501/T";
 	              .enter()	           
       
       g4.append('rect')
-	         .attr('fill','green')
+	         .attr('fill','#DAF1DD')
 	         .attr('x',function(d) {
 	                return urixscale(d)+'px' ;
                    })
@@ -214,3 +255,6 @@ var kehaiquote  = "6501/T";
        $(".canvas").append("入力された値が銘柄コードではないようです。");  
       }
   }
+  
+
+       

@@ -16,6 +16,14 @@ table tbody{
 svg{
 	border: medium solid black;
 }
-.pillar{
+.pillardown{
 	stroke: green;
+}
+
+.pillarup{
+	stroke: red;
+}
+
+.pillarnormal{
+	stroke: black;
 }
