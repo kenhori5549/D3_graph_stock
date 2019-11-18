@@ -1,4 +1,3 @@
-var kehaiquote  = "6501/T";
   $("#button").click(function(){
       var kehaiquote = $("#input").val();
       console.log(kehaiquote);
@@ -273,7 +272,7 @@ var kehaiquote  = "6501/T";
 	   //買い気配の描画       
 	   var g=svg.selectAll('g')
 	            .data(Object.values(kaikehai))
-	              .enter()
+	              .enter();
 	              
       	      g.append('rect')
       	         .attr('fill','#F9E3E1')
@@ -290,7 +289,7 @@ var kehaiquote  = "6501/T";
 	                 } 
 	                    
 	                })
-                 .attr('height',29+'px')  	
+                 .attr('height',29+'px');  	
               g.append('text')
                  .attr('x',function(d) {
       	                return 360+'px';
@@ -357,7 +356,7 @@ var kehaiquote  = "6501/T";
    //売り気配の描画   	           
     var g4=svg.selectAll('g4')
 	            .data(Object.values(urikehai))
-	              .enter()	           
+	              .enter();	           
       
       g4.append('rect')
 	         .attr('fill','#DAF1DD')

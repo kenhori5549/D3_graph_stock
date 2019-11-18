@@ -5,17 +5,58 @@
   <title>Cyber API Test</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="main.css">
+  
+  <style>
+
+  .tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font: 12px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+    -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+    visibility: hidden;
+    opacity:100;
+  }
+  
+  .circle{
+    opacity:0.6;
+  }
+  
+  
+  .circle:hover {
+    stroke: navy;
+    stroke-width:"10";
+    opacity:1.0;
+  }
+ 
+
+</style>
+  
 </head>
 <body>
   <div class="container">
-    <h2>per時価総額画面</h2>
-    <a href="per.html">per時価総額画面</a>
+    <h2>perroe時価総額画面</h2>
+    <a href="main.html">気配barchart画面</a>
     <div>※銘柄コードを入力してください。</div>
     <form action="" method="get">
-    <input id="input" type="text" value="6501/T">
+    <input id="input0" type="text" value="6501/T">
+    <input id="input1" type="text" value="9984/T">
+    <input id="input2" type="text" value="7203/T">
+    <input id="input3" type="text" value="8604/T">
+    <input id="input4" type="text" value="9983/T">
+    <input id="input5" type="text" value="7974/T">
+    <input id="input6" type="text" value="6752/T">
+    <input id="input7" type="text" value="8306/T">
+    <input id="input8" type="text" value="2413/T">
+    <input id="input9" type="text" value="4578/T">
     <input type="button" id="button" value ="送信ボタン">
     <div id="main"></div>
-    <div class="kehaiquote"></div>
+
 
       <div class="canvas"></div>
   
@@ -26,7 +67,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="url.js"></script>
-  <script src="kehai_data.js"></script>
-  <script src="main.js"></script>
+  <script src="per.js"></script>
 </body>
 </html>
