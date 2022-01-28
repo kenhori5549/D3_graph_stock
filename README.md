@@ -28,7 +28,7 @@ https://user-images.githubusercontent.com/45525748/151479888-cb7f4d27-ea70-4bab-
 - 気配量に応じて棒グラフ化して買いと売りの勢いを可視化
 - OVERとUNDER気配はOVERとUNDER気配だけで比較(10本気配とは異なる枠組みで比較)
 
-![](./img/README_2022-01-27-20-32-24.png)
+[](![](./img/README_2022-01-27-20-32-24.png))
 
 #### 2. 銘柄コード(4,5桁数値)を10個入力することで、銘柄間のPER,ROE,時価総額を比較可能とする。
 
@@ -41,7 +41,7 @@ https://user-images.githubusercontent.com/45525748/151479888-cb7f4d27-ea70-4bab-
 - いくつかの図は円がCanvasからはみ出ているが、軸からはみ出ないようにしている
 - [ちょっと参考にしたサイト](https://archive.nytimes.com/www.nytimes.com/interactive/2012/05/17/business/dealbook/how-the-facebook-offering-compares.html)
 
-![](./img/README_2022-01-27-20-24-19.png)
+[](![](./img/README_2022-01-27-20-24-19.png))
 
 
 ## D3.jsの簡単な理解
