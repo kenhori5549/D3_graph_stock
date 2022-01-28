@@ -4,4 +4,4 @@ url.js
 kehai_data.js
 .clocignore
 
-/img/D3.js説明.xlsx
+*.xlsx
