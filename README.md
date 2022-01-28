@@ -9,7 +9,7 @@
 
 ## できたもの
 1. 気配情報の棒グラフ(barchart)化([main.html](/main.html))
-![demo](https://user-images.githubusercontent.com/45525748/151479888-cb7f4d27-ea70-4bab-9ce3-6f3d0f876b17.mp4)
+![demo](./img/barchart_demo.gif)
 2. 複数銘柄の指標をバブルチャートにして表示([per.html](/per.html))
 ![](./img/README_2022-01-27-20-00-28.png)
 ![](./img/README_2022-01-27-19-51-46.png)
